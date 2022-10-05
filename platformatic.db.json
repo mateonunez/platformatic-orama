@@ -1,0 +1,16 @@
+{
+  "server": {
+    "hostname": "127.0.0.1",
+    "port": "3042",
+    "healthCheck": {
+      "interval": 2000
+    }
+  },
+  "core": {
+    "connectionString": "sqlite://./quotes.sqlite",
+    "graphql": true
+  },
+  "migrations": {
+    "dir": "./database/migrations"
+  }
+}
