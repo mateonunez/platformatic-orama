@@ -4,7 +4,7 @@ const quotes = [
   // generate 100 random quotes
   ...Array.from({ length: 1000 }, () => ({
     quote: Math.random().toString(36).substring(7),
-    author: "mateonunez",
+    author: 'mateonunez'
   }))
 ]
 
