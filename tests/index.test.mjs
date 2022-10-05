@@ -1,6 +1,6 @@
 import { test } from 'tap'
 
-test('test', (t) => {
-  t.pass()
-  t.end()
+test('test', ({ ok, end }) => {
+  ok(true)
+  end()
 })
