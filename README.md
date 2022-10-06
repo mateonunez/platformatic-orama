@@ -9,6 +9,19 @@ The services exposes two routes:
 
 ```bash
 $ npm install
+```
+
+Create a new migration file in `database/migrations/001.do.sql`.
+
+```sql
+CREATE TABLE quotes(
+  id INTEGER PRIMARY KEY,
+  author VARCHAR(255) NOT NULL,
+  quote TEXT NOT NULL
+)
+```
+
+```bash
 $ npm run platformatic:seed
 $ npm start
 ```
