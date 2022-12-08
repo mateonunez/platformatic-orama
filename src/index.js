@@ -14,7 +14,7 @@ async function main () {
     }
   })
 
-  const conn = await mapper.connect({ connectionString })
+  const conn = await mapper.connect({ connectionString, log: app.log })
 
   app.ready(async () => {
     const quotes = await conn.entities.quote?.find()
