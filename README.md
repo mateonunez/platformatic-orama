@@ -1,8 +1,8 @@
-# Platformatic with Lyra
+# Platformatic with Orama
 
 The services exposes two routes:
 
-- `/lyra/:author` - returns a list of all the posts that matches the `author` query param using [Lyra](https://github.com/LyraSearch/lyra)
+- `/orama/:author` - returns a list of all the posts that matches the `author` query param using [Orama](https://github.com/OramaSearch/orama)
 - `/mapper/:author` - returns a list of all the posts that matches the `author` query param using the native [@platformatic/sql-mapper](https://www.npmjs.com/package/@platformatic/sql-mapper)
 
 ## Usage
@@ -22,6 +22,7 @@ CREATE TABLE quotes(
 ```
 
 ```bash
+$ npm run platformatic:migrate
 $ npm run platformatic:seed
 $ npm start
 ```
