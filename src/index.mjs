@@ -1,9 +1,9 @@
 'use strict'
 
-const Fastify = require('fastify')
-const mapper = require('@platformatic/sql-mapper')
-const FastifyLyra = require('@mateonunez/fastify-lyra')
-const resolveSchema = require('./lib/schema.js')
+import Fastify from 'fastify'
+import mapper from '@platformatic/sql-mapper'
+import FastifyOrama from 'fastify-orama'
+import resolveSchema from './lib/schema.js'
 
 const connectionString = 'sqlite://./quotes.sqlite'
 
@@ -16,32 +16,41 @@ async function main () {
 
   const conn = await mapper.connect({ connectionString, log: app.log })
 
-  app.ready(async () => {
+  async function migrateQuotes () {
     const quotes = await conn.entities.quote?.find()
     if (quotes?.length > 0) {
       for (const quote of quotes) {
         if (quote.id) delete quote.id
-        await app.lyra.insert(quote)
+        await app.orama.insert(quote)
       }
     }
-    console.log('Quotes migrated to Lyra')
+    console.log('Quotes migrated to Orama')
+  }
+
+  app.ready(() => {
+    migrateQuotes().catch(error => {
+      console.error('Error migrating quotes:', error)
+    })
   })
 
-  app.register(FastifyLyra, { schema: resolveSchema(conn.entities) })
+  app.register(FastifyOrama, { schema: resolveSchema(conn.entities) })
   app.register(mapper.plugin, { connectionString })
 
-  app.get('/quotes/lyra/:author', async function (req, reply) {
+  app.get('/quotes/orama/:author', async function (req, reply) {
     const { author } = req.params
-    const search = await app.lyra.search({
+    console.time('orama-search')
+    const search = await app.orama.search({
       term: author,
       exact: true,
       limit: 1000
     })
+    console.timeEnd('orama-search')
     return { count: search.hits.length, quotes: search.hits }
   })
 
   app.get('/quotes/mapper/:author', async function (req, reply) {
     const { author } = req.params
+    console.time('mapper-search')
     const res = await app.platformatic.entities.quote.find({
       where: {
         author: {
@@ -49,6 +58,7 @@ async function main () {
         }
       }
     })
+    console.timeEnd('mapper-search')
     return { count: res.length, quotes: res }
   })
 
