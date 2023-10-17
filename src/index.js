@@ -1,9 +1,9 @@
 'use strict'
 
-import Fastify from 'fastify'
-import mapper from '@platformatic/sql-mapper'
-import FastifyOrama from 'fastify-orama'
-import resolveSchema from './lib/schema.js'
+const Fastify = require('fastify')
+const mapper = require('@platformatic/sql-mapper')
+const FastifyOrama = require('fastify-orama')
+const resolveSchema = require('./lib/schema.js')
 
 const connectionString = 'sqlite://./quotes.sqlite'
 
@@ -38,19 +38,16 @@ async function main () {
 
   app.get('/quotes/orama/:author', async function (req, reply) {
     const { author } = req.params
-    console.time('orama-search')
     const search = await app.orama.search({
       term: author,
       exact: true,
       limit: 1000
     })
-    console.timeEnd('orama-search')
     return { count: search.hits.length, quotes: search.hits }
   })
 
   app.get('/quotes/mapper/:author', async function (req, reply) {
     const { author } = req.params
-    console.time('mapper-search')
     const res = await app.platformatic.entities.quote.find({
       where: {
         author: {
@@ -58,7 +55,6 @@ async function main () {
         }
       }
     })
-    console.timeEnd('mapper-search')
     return { count: res.length, quotes: res }
   })
 
